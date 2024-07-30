@@ -57,7 +57,7 @@ export default function Home() {
         }
     }, [page]);
 
-    const lastPostElementRef = useCallback(node => {
+    const lastPostElementRef = useCallback((node: HTMLElement | null) => {
         if (loading) return;
         if (observer.current) observer.current.disconnect();
         observer.current = new IntersectionObserver(entries => {
