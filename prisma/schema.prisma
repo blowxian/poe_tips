@@ -1,0 +1,43 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  redditId    String    @unique
+  title       String
+  content     String?
+  titleZh     String? // 中文翻译的标题
+  contentZh   String? // 中文翻译的内容
+  subreddit   String
+  author      String?
+  score       Int
+  upvoteRatio Float
+  numComments Int
+  permalink   String
+  createdUtc  DateTime
+  url         String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  comments    Comment[]
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  redditId   String   @unique
+  postId     Int
+  author     String?
+  content    String
+  contentZh  String? // 中文翻译的内容
+  score      Int
+  createdUtc DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  post Post @relation(fields: [postId], references: [id])
+}

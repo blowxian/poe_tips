@@ -1,10 +1,22 @@
 version: '3.8'
 
 services:
-  app:
-    image: blowxian/lison-next-tmpl:latest
+  aipg:
+    image: blowxian/poe_tips:latest
+    container_name: poe_tips
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: production
     restart: always
+  aipg_db:
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: poe_tips_admin
+      POSTGRES_PASSWORD: poe_tips_2024
+      POSTGRES_DB: poe_tips
+    volumes:
+      - ./data:/var/lib/postgresql/data                           # 持久化数据
+    container_name: poe_tips_db

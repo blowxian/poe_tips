@@ -1,97 +1,252 @@
-import {useTranslations} from 'next-intl';
+"use client";
+
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {usePostStore} from './store';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faClock, faComments, faStar, faThumbsUp, faTimes, faUser} from '@fortawesome/free-solid-svg-icons';
+
+interface Comment {
+    redditId: string;
+    author: string;
+    createdUtc: number;
+    score: number;
+    content: string;
+}
+
+interface Post {
+    redditId: string;
+    title: string;
+    content: string;
+    author: string;
+    createdUtc: number;
+    score: number;
+    upvoteRatio: number;
+    numComments: number;
+    url: string;
+    comments: Comment[];
+}
 
 export default function Home() {
-    const t = useTranslations('Index' as any);
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const observer = useRef<IntersectionObserver | null>(null);
+    const {selectedPost, selectPost, clearPost} = usePostStore();
+    const initialRender = useRef(true); // 添加这个 ref 来检查是否是初次渲染
+
+    const fetchPosts = async (page: number) => {
+        setLoading(true);
+        const res = await fetch(`/api/post?page=${page}`);
+        const {posts: newPosts, hasMore: newHasMore} = await res.json();
+        setPosts(prevPosts => [...prevPosts, ...newPosts]);
+        setHasMore(newHasMore);
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        if (initialRender.current) {
+            initialRender.current = false;
+            fetchPosts(1); // 初次渲染时请求第一页数据
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!initialRender.current && page > 1) {
+            fetchPosts(page); // 仅在 page 大于 1 时请求
+        }
+    }, [page]);
+
+    const lastPostElementRef = useCallback(node => {
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prevPage => prevPage + 1);
+            }
+        });
+        if (node) observer.current.observe(node);
+    }, [loading, hasMore]);
 
     return (
-        <main className="py-12 max-w-6xl mx-auto min-h-screen flex flex-col items-center justify-between">
-            <h1 className="text-6xl title text-center mb-6 text-shadow-lg">流放之路 交流站</h1>
-            <div
-                className="flex flex-col items-center justify-between bg-black opacity-80 rounded-2xl shadow-custom">
+        <>
+            <main
+                className={`py-12 max-w-6xl mx-auto min-h-screen flex flex-col items-center justify-between relative transition-transform duration-300 ${selectedPost ? 'transform translate-x-[-22%]' : 'transform translate-x-0'}`}>
+                <h1 className="text-6xl title text-center mb-6 text-shadow-lg">流放之路 交流站</h1>
 
-                <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-                    <a
-                        href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                        className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <h2 className="mb-3 text-2xl font-semibold title">
-                            攻略{" "}
-                            <span
-                                className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-                        </h2>
-                        <p className="m-0 max-w-[30ch] text-sm opacity-50">
-                            Find in-depth information about Next.js features and API.
-                        </p>
-                    </a>
-
-                    <a
-                        href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-                        className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <h2 className="mb-3 text-2xl font-semibold title">
-                            技巧{" "}
-                            <span
-                                className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-                        </h2>
-                        <p className="m-0 max-w-[30ch] text-sm opacity-50">
-                            Learn about Next.js in an interactive course with&nbsp;quizzes!
-                        </p>
-                    </a>
-
-                    <a
-                        href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                        className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <h2 className="mb-3 text-2xl font-semibold title">
-                            地图{" "}
-                            <span
-                                className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-                        </h2>
-                        <p className="m-0 max-w-[30ch] text-sm opacity-50">
-                            Explore starter templates for Next.js.
-                        </p>
-                    </a>
-
-                    <a
-                        href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-                        className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <h2 className="mb-3 text-2xl font-semibold title">
-                            道具{" "}
-                            <span
-                                className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-                        </h2>
-                        <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-                            Instantly deploy your Next.js site to a shareable URL with Vercel.
-                        </p>
-                    </a>
+                <div
+                    className="flex flex-col items-center justify-between bg-black opacity-80 rounded-2xl shadow-custom">
+                    <div
+                        className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-3 lg:text-left gap-4">
+                        {posts.map((post, index) => {
+                            if (index === posts.length - 1) {
+                                return (
+                                    <div ref={lastPostElementRef} key={post.redditId}
+                                         className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:opacity-100 cursor-pointer flex flex-col justify-between"
+                                         onClick={() => selectPost(post)}>
+                                        <div>
+                                            <h2 className="mb-3 text-2xl font-semibold title">{post.title}</h2>
+                                            <p className="m-0 text-sm opacity-80 content">{post.content}</p>
+                                        </div>
+                                        <div>
+                                            <div
+                                                className="text-xs text-gray-400 mt-2 flex flex-wrap items-center space-x-2">
+                                                <div className="flex items-center">
+                                                    <FontAwesomeIcon icon={faStar} className="mr-1"/>
+                                                    {post.score}
+                                                </div>
+                                                <div className="flex items-center">
+                                                    <FontAwesomeIcon icon={faThumbsUp} className="mr-1"/>
+                                                    {post.upvoteRatio}
+                                                </div>
+                                                <div className="flex items-center">
+                                                    <FontAwesomeIcon icon={faComments} className="mr-1"/>
+                                                    {post.numComments}
+                                                </div>
+                                            </div>
+                                            <div
+                                                className="text-xs text-gray-400 mt-2 flex flex-wrap items-center space-x-2">
+                                                <div className="flex items-center">
+                                                    <FontAwesomeIcon icon={faUser} className="mr-1"/>
+                                                    {post.author}
+                                                </div>
+                                                <div className="flex items-center">
+                                                    <FontAwesomeIcon icon={faClock} className="mr-1"/>
+                                                    {new Date(post.createdUtc).toLocaleDateString(undefined, {
+                                                        month: '2-digit',
+                                                        day: '2-digit',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            } else {
+                                return (
+                                    <div key={post.redditId}
+                                         className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:opacity-100 cursor-pointer flex flex-col justify-between"
+                                         onClick={() => selectPost(post)}>
+                                        <div>
+                                            <h2 className="mb-3 text-2xl font-semibold title">{post.title}</h2>
+                                            <p className="m-0 text-sm opacity-80 content">{post.content}</p>
+                                        </div>
+                                        <div>
+                                            <div
+                                                className="text-xs text-gray-400 mt-2 flex flex-wrap items-center space-x-2">
+                                                <div className="flex items-center">
+                                                    <FontAwesomeIcon icon={faStar} className="mr-1"/>
+                                                    {post.score}
+                                                </div>
+                                                <div className="flex items-center">
+                                                    <FontAwesomeIcon icon={faThumbsUp} className="mr-1"/>
+                                                    {post.upvoteRatio}
+                                                </div>
+                                                <div className="flex items-center">
+                                                    <FontAwesomeIcon icon={faComments} className="mr-1"/>
+                                                    {post.numComments}
+                                                </div>
+                                            </div>
+                                            <div
+                                                className="text-xs text-gray-400 mt-2 flex flex-wrap items-center space-x-2">
+                                                <div className="flex items-center">
+                                                    <FontAwesomeIcon icon={faUser} className="mr-1"/>
+                                                    {post.author}
+                                                </div>
+                                                <div className="flex items-center">
+                                                    <FontAwesomeIcon icon={faClock} className="mr-1"/>
+                                                    {new Date(post.createdUtc).toLocaleDateString(undefined, {
+                                                        month: '2-digit',
+                                                        day: '2-digit',
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            }
+                        })}
+                    </div>
                 </div>
-            </div>
+                <div className="z-10 w-full max-w-5xl items-center lg:flex text-xs mt-6">
+                    By&nbsp;&nbsp;<a className="hover:underline"
+                                     href="https://space.bilibili.com/3537125507074883"
+                                     target="_blank"
+                                     rel="noopener noreferrer">
+                    <span className="text-base text-[#dfcf99]">@TuberPOE大佬攻略汇集地</span>
+                </a>
+                </div>
+            </main>
 
-            <div className="z-10 w-full max-w-5xl items-center font-mono lg:flex text-xs">
-                By&nbsp;<a className="hover:underline"
-                           href="https://space.bilibili.com/3537125507074883"
-                           target="_blank"
-                           rel="noopener noreferrer">
-                <span className="text-base text-[#dfcf99]">@TuberPOE大佬攻略汇集地</span>
-            </a>
-            </div>
-        </main>
+            {selectedPost && (
+                <div
+                    className="fixed top-0 right-0 w-1/3 h-full bg-white shadow-custom overflow-auto p-6 z-50 transition-transform duration-300 transform translate-x-0"
+                    style={{
+                        backgroundImage: "url('/image/bg-sidebar.webp')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }}
+                >
+                    <button onClick={clearPost} className="title text-lg font-semibold mb-4">
+                        <FontAwesomeIcon icon={faTimes}/>
+                    </button>
+                    <h2 className="text-3xl font-semibold mb-3 title">{selectedPost.title}</h2>
+                    <div className="text-xs text-gray-400 mt-2 flex flex-wrap items-center space-x-2 flex justify-end">
+                        <div className="flex items-center">
+                            <FontAwesomeIcon icon={faUser} className="mr-1"/>
+                            {selectedPost.author}
+                        </div>
+                        <div className="flex items-center">
+                            <FontAwesomeIcon icon={faClock} className="mr-1"/>
+                            {new Date(selectedPost.createdUtc).toLocaleString()}
+                        </div>
+                        <div className="flex items-center">
+                            <FontAwesomeIcon icon={faStar} className="mr-1"/>
+                            {selectedPost.score}
+                        </div>
+                        <div className="flex items-center">
+                            <FontAwesomeIcon icon={faThumbsUp} className="mr-1"/>
+                            {selectedPost.upvoteRatio}
+                        </div>
+                        <div className="flex items-center">
+                            <FontAwesomeIcon icon={faComments} className="mr-1"/>
+                            {selectedPost.numComments}
+                        </div>
+                    </div>
+                    <p className="text-sm mb-4">{selectedPost.content}</p>
+                    <div className="mt-4">
+                        {selectedPost.comments.map(comment => (
+                            <>
+                                <div key={comment.redditId}
+                                     className="text-xs text-gray-400 mt-2 flex flex-wrap items-center space-x-2">
+                                    <div className="flex items-center">
+                                        <FontAwesomeIcon icon={faUser} className="mr-1"/>
+                                        {comment.author}
+                                    </div>
+                                    <div className="flex items-center">
+                                        <FontAwesomeIcon icon={faClock} className="mr-1"/>
+                                        {new Date(comment.createdUtc).toLocaleDateString(undefined, {
+                                            month: '2-digit',
+                                            day: '2-digit',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        })}
+                                    </div>
+                                    <div className="flex items-center">
+                                        <FontAwesomeIcon icon={faStar} className="mr-1"/>
+                                        {comment.score}
+                                    </div>
+                                </div>
+                                <p className="mb-5 border-l-2 border-gray-300 my-2 pl-2">{comment.content}</p>
+                            </>
+                        ))}
+
+                    </div>
+                </div>
+            )}
+        </>
     );
 }
