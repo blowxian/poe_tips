@@ -10,6 +10,12 @@ COPY package*.json ./
 # 安装依赖
 RUN npm install --production
 
+# 复制 Prisma schema
+COPY prisma ./prisma
+
+# 运行 Prisma generate
+RUN npx prisma generate
+
 # 复制应用代码
 COPY . .
 
