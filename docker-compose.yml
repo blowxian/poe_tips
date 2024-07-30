@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  aipg:
+  poe_tips:
     image: blowxian/poe_tips:latest
     container_name: poe_tips
     ports:
@@ -9,7 +9,7 @@ services:
     environment:
       NODE_ENV: production
     restart: always
-  aipg_db:
+  poe_tips_db:
     image: postgres:alpine
     ports:
       - "5432:5432"
