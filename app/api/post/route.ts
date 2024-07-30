@@ -24,6 +24,11 @@ export async function GET(request: NextRequest) {
             prisma.post.count(),
         ]);
 
+        // 检查是否有帖子
+        if (posts.length === 0) {
+            return NextResponse.json({posts: [], hasMore: false});
+        }
+
         const hasMore = offset + posts.length < totalPosts;
         return NextResponse.json({posts, hasMore});
     } catch (error) {
