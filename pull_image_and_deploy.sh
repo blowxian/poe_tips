@@ -11,7 +11,7 @@ fi
 
 # 拉取最新的 Docker 镜像
 echo "正在拉取最新的 Docker 镜像..."
-if docker-compose -f docker-compose.prod.yml pull aipg; then
+if docker-compose -f docker-compose.prod.yml pull poe_tips; then
     echo "Docker 镜像拉取成功。"
 else
     echo "Docker 镜像拉取失败！"
