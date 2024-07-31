@@ -3,7 +3,15 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {usePostStore} from './store';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faClock, faComments, faStar, faThumbsUp, faTimes, faUser} from '@fortawesome/free-solid-svg-icons';
+import {
+    faArrowUpRightFromSquare,
+    faClock,
+    faComments,
+    faStar,
+    faThumbsUp,
+    faTimes,
+    faUser
+} from '@fortawesome/free-solid-svg-icons';
 
 interface Comment {
     redditId: string;
@@ -73,6 +81,15 @@ export default function Home() {
             <main
                 className={`py-12 max-w-6xl mx-auto min-h-screen flex flex-col items-center justify-between relative transition-transform duration-300 ${selectedPost ? 'transform translate-x-[-22%]' : 'transform translate-x-0'}`}>
                 <h1 className="text-6xl title text-center mb-6 text-shadow-lg">流放之路 交流站</h1>
+                <div className="z-10 w-full max-w-5xl text-center text-xs mb-6">
+                    By&nbsp;&nbsp;<a className="hover:underline"
+                                     href="https://space.bilibili.com/3537125507074883"
+                                     target="_blank"
+                                     rel="noopener noreferrer">
+                    <span className="text-base text-[#dfcf99]">@TuberPOE大佬攻略汇集地
+                    <FontAwesomeIcon className="text-xs ml-2" icon={faArrowUpRightFromSquare}/></span>
+                </a>
+                </div>
 
                 <div
                     className="flex flex-col items-center justify-between bg-black opacity-80 rounded-2xl shadow-custom">
@@ -176,7 +193,8 @@ export default function Home() {
                                      href="https://space.bilibili.com/3537125507074883"
                                      target="_blank"
                                      rel="noopener noreferrer">
-                    <span className="text-base text-[#dfcf99]">@TuberPOE大佬攻略汇集地</span>
+                    <span className="text-base text-[#dfcf99]">@TuberPOE大佬攻略汇集地
+                    <FontAwesomeIcon className="text-xs ml-2" icon={faArrowUpRightFromSquare}/></span>
                 </a>
                 </div>
             </main>
