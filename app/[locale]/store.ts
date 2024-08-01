@@ -7,12 +7,15 @@ interface Comment {
     createdUtc: number;
     score: number;
     content: string;
+    contentZh: string;
 }
 
 interface Post {
     redditId: string;
     title: string;
     content: string;
+    titleZh: string;
+    contentZh: string;
     author: string;
     createdUtc: number;
     score: number;

@@ -24,7 +24,9 @@ interface Comment {
 interface Post {
     redditId: string;
     title: string;
+    titleZh: string;
     content: string;
+    contentZh: string;
     author: string;
     createdUtc: number;
     score: number;
@@ -102,8 +104,8 @@ export default function Home() {
                                          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:opacity-100 cursor-pointer flex flex-col justify-between"
                                          onClick={() => selectPost(post)}>
                                         <div>
-                                            <h2 className="mb-3 text-2xl font-semibold title">{post.title}</h2>
-                                            <p className="m-0 text-sm opacity-80 content">{post.content}</p>
+                                            <h2 className="mb-3 text-2xl font-semibold title title-short">{post.titleZh || post.title}</h2>
+                                            <p className="m-0 text-sm opacity-80 content">{post.contentZh || post.content}</p>
                                         </div>
                                         <div>
                                             <div
@@ -146,8 +148,8 @@ export default function Home() {
                                          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:opacity-100 cursor-pointer flex flex-col justify-between"
                                          onClick={() => selectPost(post)}>
                                         <div>
-                                            <h2 className="mb-3 text-2xl font-semibold title">{post.title}</h2>
-                                            <p className="m-0 text-sm opacity-80 content">{post.content}</p>
+                                            <h2 className="mb-3 text-2xl font-semibold title title-short">{post.titleZh || post.title}</h2>
+                                            <p className="m-0 text-sm opacity-80 content">{post.contentZh || post.content}</p>
                                         </div>
                                         <div>
                                             <div
@@ -201,18 +203,14 @@ export default function Home() {
 
             {selectedPost && (
                 <div
-                    className="fixed top-0 right-0 w-1/3 h-full bg-white shadow-custom overflow-auto p-6 z-50 transition-transform duration-300 transform translate-x-0"
-                    style={{
-                        backgroundImage: "url('/image/bg-sidebar.webp')",
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                    }}
+                    className="fixed top-0 right-0 w-1/3 h-screen bg-black bg-opacity-80 shadow-custom overflow-auto p-6 z-0 transition-transform duration-300 transform translate-x-0"
                 >
-                    <button onClick={clearPost} className="title text-lg font-semibold mb-4">
+                    <button onClick={clearPost} className="title text-lg font-semibold mb-4  z-20 relative">
                         <FontAwesomeIcon icon={faTimes}/>
                     </button>
-                    <h2 className="text-3xl font-semibold mb-3 title">{selectedPost.title}</h2>
-                    <div className="text-xs text-gray-400 mt-2 flex flex-wrap items-center space-x-2 flex justify-end">
+                    <h2 className="text-3xl font-semibold mb-3 title z-20 relative">{selectedPost.titleZh || selectedPost.title}</h2>
+                    <div
+                        className="text-xs text-gray-400 mt-2 flex flex-wrap items-center space-x-2 justify-end z-20 relative">
                         <div className="flex items-center">
                             <FontAwesomeIcon icon={faUser} className="mr-1"/>
                             {selectedPost.author}
@@ -234,8 +232,8 @@ export default function Home() {
                             {selectedPost.numComments}
                         </div>
                     </div>
-                    <p className="text-sm mb-4">{selectedPost.content}</p>
-                    <div className="mt-4">
+                    <p className="text-sm mb-4 z-20 relative">{selectedPost.contentZh || selectedPost.content}</p>
+                    <div className="mt-4 z-20 relative">
                         {selectedPost.comments.map(comment => (
                             <>
                                 <div key={comment.redditId}
@@ -258,7 +256,7 @@ export default function Home() {
                                         {comment.score}
                                     </div>
                                 </div>
-                                <p className="mb-5 border-l-2 border-gray-300 my-2 pl-2">{comment.content}</p>
+                                <p className="mb-5 border-l-2 border-gray-300 my-2 pl-2">{comment.contentZh || comment.content}</p>
                             </>
                         ))}
 
