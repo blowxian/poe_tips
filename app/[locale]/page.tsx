@@ -90,7 +90,7 @@ export default function Home() {
         <>
             <main
                 className={`py-12 max-w-6xl mx-auto min-h-screen flex flex-col items-center justify-between relative transition-transform duration-300 ${selectedPost ? 'transform translate-x-[-22%]' : 'transform translate-x-0'}`}>
-                <h1 className="text-6xl title text-center mb-6 text-shadow-lg">流放之路 交流站</h1>
+                <h1 className="text-6xl title text-center mb-6 text-shadow-lg">流放之路小贴士 poe.tips</h1>
                 <div className="z-10 w-full max-w-5xl text-center text-xs mb-6">
                     By&nbsp;&nbsp;<a className="hover:underline"
                                      href="https://space.bilibili.com/3537125507074883"
