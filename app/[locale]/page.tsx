@@ -44,6 +44,7 @@ export default function Home() {
     const observer = useRef<IntersectionObserver | null>(null);
     const {selectedPost, selectPost, clearPost} = usePostStore();
     const initialRender = useRef(true); // 添加这个 ref 来检查是否是初次渲染
+    const detailsRef = useRef(null);
 
     const fetchPosts = async (page: number) => {
         setLoading(true);
@@ -66,6 +67,13 @@ export default function Home() {
             fetchPosts(page); // 仅在 page 大于 1 时请求
         }
     }, [page]);
+
+    // 监听 selectedPost 变化，并滚动到顶部
+    useEffect(() => {
+        if (selectedPost && detailsRef.current) {
+            detailsRef.current.scrollTop = 0;
+        }
+    }, [selectedPost]);
 
     const lastPostElementRef = useCallback((node: HTMLElement | null) => {
         if (loading) return;
@@ -203,6 +211,7 @@ export default function Home() {
 
             {selectedPost && (
                 <div
+                    ref={detailsRef}
                     className="fixed top-0 right-0 w-1/3 h-screen bg-black bg-opacity-80 shadow-custom overflow-auto p-6 z-0 transition-transform duration-300 transform translate-x-0"
                 >
                     <button onClick={clearPost} className="title text-lg font-semibold mb-4  z-20 relative">
