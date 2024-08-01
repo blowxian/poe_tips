@@ -102,7 +102,7 @@ export default function Home() {
                                 return (
                                     <div ref={lastPostElementRef} key={post.redditId}
                                          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:opacity-100 cursor-pointer flex flex-col justify-between"
-                                         onClick={() => selectPost(post)}>
+                                         onClick={() => selectPost(post as any)}>
                                         <div>
                                             <h2 className="mb-3 text-2xl font-semibold title title-short">{post.titleZh || post.title}</h2>
                                             <p className="m-0 text-sm opacity-80 content">{post.contentZh || post.content}</p>
@@ -146,7 +146,7 @@ export default function Home() {
                                 return (
                                     <div key={post.redditId}
                                          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:opacity-100 cursor-pointer flex flex-col justify-between"
-                                         onClick={() => selectPost(post)}>
+                                         onClick={() => selectPost(post as any)}>
                                         <div>
                                             <h2 className="mb-3 text-2xl font-semibold title title-short">{post.titleZh || post.title}</h2>
                                             <p className="m-0 text-sm opacity-80 content">{post.contentZh || post.content}</p>
