@@ -71,7 +71,7 @@ export default function Home() {
     // 监听 selectedPost 变化，并滚动到顶部
     useEffect(() => {
         if (selectedPost && detailsRef.current) {
-            detailsRef.current.scrollTop = 0;
+            (detailsRef.current as any).scrollTop = 0;
         }
     }, [selectedPost]);
 
