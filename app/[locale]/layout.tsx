@@ -5,8 +5,8 @@ import "./globals.css";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-    title: "流放之路交流站 ｜ by @TuberPOE大佬攻略汇集地",
-    description: "深入《流放之路》的世界，探索最全面的攻略和技巧。加入@TuberPOE大佬，与成千上万的玩家一起分享、学习并提升你的游戏技能。无论你是新手还是资深玩家，这里都是你的理想交流站。",
+    title: "流放之路小贴士  poe.tips ｜ by @TuberPOE大佬攻略汇集地",
+    description: "流放之路小贴士  poe.tips 流放之路国际服大佬攻略汇集地！汇集Reddit，YouTube，Twitter 攻略和最新资讯！",
 };
 
 export default async function LocaleLayout({
