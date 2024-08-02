@@ -7,11 +7,11 @@ import {
     faArrowUpRightFromSquare,
     faClock,
     faComments,
-    faStar,
     faThumbsUp,
     faTimes,
     faUser
 } from '@fortawesome/free-solid-svg-icons';
+import Image from "next/image";
 
 interface Comment {
     redditId: string;
@@ -90,8 +90,9 @@ export default function Home() {
         <>
             <main
                 className={`py-12 max-w-6xl mx-auto min-h-screen flex flex-col items-center justify-between relative transition-transform duration-300 ${selectedPost ? 'transform translate-x-[-22%]' : 'transform translate-x-0'}`}>
-                <h1 className="text-6xl title text-center mb-6 text-shadow-lg">流放之路小贴士 poe.tips</h1>
-                <div className="z-10 w-full max-w-5xl text-center text-xs mb-6">
+                <h1 className="text-3xl md:text-6xl title text-center mb-6 text-shadow-lg">流放之路小贴士 poe.tips</h1>
+                <div
+                    className="z-10 w-full max-w-5xl text-center text-xs mb-6 flex flex-col-3 gap-3 justify-center items-center">
                     By&nbsp;&nbsp;<a className="hover:underline"
                                      href="https://space.bilibili.com/3537125507074883"
                                      target="_blank"
@@ -99,10 +100,14 @@ export default function Home() {
                     <span className="text-base text-[#dfcf99]">@TuberPOE大佬攻略汇集地
                     <FontAwesomeIcon className="text-xs ml-2" icon={faArrowUpRightFromSquare}/></span>
                 </a>
+                    粉丝群：
+                    <span className="mt-4">
+                        <Image src="/image/qr/wx_fans_001.png" alt="微信群二维码" width="64" height="64"/>
+                    </span>
                 </div>
 
                 <div
-                    className="flex flex-col items-center justify-between bg-black opacity-80 rounded-2xl shadow-custom">
+                    className="flex flex-col items-center justify-between bg-black opacity-80 rounded-2xl shadow-custom w-full px-4">
                     <div
                         className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-3 lg:text-left gap-4">
                         {posts.map((post, index) => {
@@ -112,19 +117,15 @@ export default function Home() {
                                          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:opacity-100 cursor-pointer flex flex-col justify-between"
                                          onClick={() => selectPost(post as any)}>
                                         <div>
-                                            <h2 className="mb-3 text-2xl font-semibold title title-short">{post.titleZh || post.title}</h2>
-                                            <p className="m-0 text-sm opacity-80 content">{post.contentZh || post.content}</p>
+                                            <h2 className="mb-3 text-xl md:text-2xl font-semibold title title-short">{post.titleZh || post.title}</h2>
+                                            <p className="m-0 text-xs md:text-sm opacity-80 content">{post.contentZh || post.content}</p>
                                         </div>
                                         <div>
                                             <div
                                                 className="text-xs text-gray-400 mt-2 flex flex-wrap items-center space-x-2">
                                                 <div className="flex items-center">
-                                                    <FontAwesomeIcon icon={faStar} className="mr-1"/>
-                                                    {post.score}
-                                                </div>
-                                                <div className="flex items-center">
                                                     <FontAwesomeIcon icon={faThumbsUp} className="mr-1"/>
-                                                    {post.upvoteRatio}
+                                                    {post.score}
                                                 </div>
                                                 <div className="flex items-center">
                                                     <FontAwesomeIcon icon={faComments} className="mr-1"/>
@@ -156,19 +157,15 @@ export default function Home() {
                                          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:opacity-100 cursor-pointer flex flex-col justify-between"
                                          onClick={() => selectPost(post as any)}>
                                         <div>
-                                            <h2 className="mb-3 text-2xl font-semibold title title-short">{post.titleZh || post.title}</h2>
-                                            <p className="m-0 text-sm opacity-80 content">{post.contentZh || post.content}</p>
+                                            <h2 className="mb-3 text-xl md:text-2xl font-semibold title title-short">{post.titleZh || post.title}</h2>
+                                            <p className="m-0 text-xs md:text-sm opacity-80 content">{post.contentZh || post.content}</p>
                                         </div>
                                         <div>
                                             <div
                                                 className="text-xs text-gray-400 mt-2 flex flex-wrap items-center space-x-2">
                                                 <div className="flex items-center">
-                                                    <FontAwesomeIcon icon={faStar} className="mr-1"/>
-                                                    {post.score}
-                                                </div>
-                                                <div className="flex items-center">
                                                     <FontAwesomeIcon icon={faThumbsUp} className="mr-1"/>
-                                                    {post.upvoteRatio}
+                                                    {post.score}
                                                 </div>
                                                 <div className="flex items-center">
                                                     <FontAwesomeIcon icon={faComments} className="mr-1"/>
@@ -212,12 +209,12 @@ export default function Home() {
             {selectedPost && (
                 <div
                     ref={detailsRef}
-                    className="fixed top-0 right-0 w-1/3 h-screen bg-black bg-opacity-80 shadow-custom overflow-auto p-6 z-0 transition-transform duration-300 transform translate-x-0"
+                    className="fixed top-0 right-0 w-full md:w-1/3 h-screen bg-black bg-opacity-80 shadow-custom overflow-auto p-6 z-0 transition-transform duration-300 transform translate-x-0"
                 >
                     <button onClick={clearPost} className="title text-lg font-semibold mb-4  z-20 relative">
                         <FontAwesomeIcon icon={faTimes}/>
                     </button>
-                    <h2 className="text-3xl font-semibold mb-3 title z-20 relative">{selectedPost.titleZh || selectedPost.title}</h2>
+                    <h2 className="text-2xl md:text-3xl font-semibold mb-3 title z-20 relative">{selectedPost.titleZh || selectedPost.title}</h2>
                     <div
                         className="text-xs text-gray-400 mt-2 flex flex-wrap items-center space-x-2 justify-end z-20 relative">
                         <div className="flex items-center">
@@ -229,12 +226,8 @@ export default function Home() {
                             {new Date(selectedPost.createdUtc).toLocaleString()}
                         </div>
                         <div className="flex items-center">
-                            <FontAwesomeIcon icon={faStar} className="mr-1"/>
-                            {selectedPost.score}
-                        </div>
-                        <div className="flex items-center">
                             <FontAwesomeIcon icon={faThumbsUp} className="mr-1"/>
-                            {selectedPost.upvoteRatio}
+                            {selectedPost.score}
                         </div>
                         <div className="flex items-center">
                             <FontAwesomeIcon icon={faComments} className="mr-1"/>
@@ -261,7 +254,7 @@ export default function Home() {
                                         })}
                                     </div>
                                     <div className="flex items-center">
-                                        <FontAwesomeIcon icon={faStar} className="mr-1"/>
+                                        <FontAwesomeIcon icon={faThumbsUp} className="mr-1"/>
                                         {comment.score}
                                     </div>
                                 </div>
