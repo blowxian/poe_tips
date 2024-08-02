@@ -256,7 +256,7 @@ export default function Home() {
                             {selectedPost.numComments}
                         </div>
                     </div>
-                    <div className="text-sm mb-4 z-20 relative">{renderPostContent(selectedPost)}</div>
+                    <div className="text-sm mb-4 z-20 relative">{renderPostContent(selectedPost as any)}</div>
                     <div className="mt-4 z-20 relative">
                         {selectedPost.comments.map(comment => (
                             <>
