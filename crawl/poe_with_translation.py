@@ -97,7 +97,7 @@ def fetch_and_store_comments(reddit_id):
 
 def fetch_and_store_posts():
     subreddit = reddit.subreddit(os.getenv('SUBREDDIT'))
-    hot_posts = subreddit.hot(limit=100)
+    hot_posts = subreddit.hot(limit=30)
     logging.info("正在从 %s 获取热门帖子。", subreddit.display_name)
 
     for post in hot_posts:
@@ -169,7 +169,7 @@ def fetch_and_store_posts():
             conn.rollback()
 
         # Fetch and store comments for the current post
-#         fetch_and_store_comments(reddit_id)
+        fetch_and_store_comments(reddit_id)
 
 def main():
     fetch_and_store_posts()
