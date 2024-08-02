@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
                     comments: true,
                 },
                 orderBy: {
-                    createdAt: 'desc',
+                    updatedAt: 'desc',
                 },
             } as any),
             prisma.post.count(),
