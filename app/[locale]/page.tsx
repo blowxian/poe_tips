@@ -33,6 +33,7 @@ interface Post {
     upvoteRatio: number;
     numComments: number;
     url: string;
+    postType: string; // 新增字段，表示帖子的类型
     comments: Comment[];
 }
 
@@ -86,6 +87,27 @@ export default function Home() {
         if (node) observer.current.observe(node);
     }, [loading, hasMore]);
 
+    const renderPostContent = (post: Post) => {
+        switch (post.postType) {
+            case 'self':
+                return <p className="m-0 text-xs md:text-sm opacity-80 content">{post.contentZh || post.content}</p>;
+            case 'link':
+                return <a href={post.url} className="text-xs md:text-sm text-blue-500 underline">{post.url}</a>;
+            case 'image':
+                return <img src={post.url} alt={post.title} className="max-w-full h-auto"/>;
+            case 'video':
+                return <video src={post.url} controls className="max-w-full h-auto"/>;
+            case 'gallery':
+                return post.contentZh && JSON.parse(post.contentZh).map((imgUrl: string, idx: number) => (
+                    <img key={idx} src={imgUrl} alt={`Gallery image ${idx + 1}`} className="max-w-full h-auto"/>
+                ));
+            case 'poll':
+                return <div className="text-xs md:text-sm">{post.contentZh || post.content}</div>;
+            default:
+                return <p className="m-0 text-xs md:text-sm opacity-80 content">未知类型</p>;
+        }
+    };
+
     return (
         <>
             <main
@@ -118,7 +140,7 @@ export default function Home() {
                                          onClick={() => selectPost(post as any)}>
                                         <div>
                                             <h2 className="mb-3 text-xl md:text-2xl font-semibold title title-short">{post.titleZh || post.title}</h2>
-                                            <p className="m-0 text-xs md:text-sm opacity-80 content">{post.contentZh || post.content}</p>
+                                            {renderPostContent(post)}
                                         </div>
                                         <div>
                                             <div
@@ -158,7 +180,7 @@ export default function Home() {
                                          onClick={() => selectPost(post as any)}>
                                         <div>
                                             <h2 className="mb-3 text-xl md:text-2xl font-semibold title title-short">{post.titleZh || post.title}</h2>
-                                            <p className="m-0 text-xs md:text-sm opacity-80 content">{post.contentZh || post.content}</p>
+                                            {renderPostContent(post)}
                                         </div>
                                         <div>
                                             <div
@@ -234,7 +256,7 @@ export default function Home() {
                             {selectedPost.numComments}
                         </div>
                     </div>
-                    <p className="text-sm mb-4 z-20 relative">{selectedPost.contentZh || selectedPost.content}</p>
+                    <div className="text-sm mb-4 z-20 relative">{renderPostContent(selectedPost)}</div>
                     <div className="mt-4 z-20 relative">
                         {selectedPost.comments.map(comment => (
                             <>

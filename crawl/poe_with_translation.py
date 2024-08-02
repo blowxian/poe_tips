@@ -50,7 +50,13 @@ def translate(text):
 
 def fetch_and_store_comments(reddit_id):
     cursor.execute("SELECT id FROM \"Post\" WHERE \"redditId\" = %s", (reddit_id,))
-    post_id = cursor.fetchone()[0]
+    result = cursor.fetchone()
+
+    if result is None:
+        logging.warning("未找到帖子ID为 %s 的记录，跳过评论处理。", reddit_id)
+        return
+
+    post_id = result[0]
 
     post = reddit.submission(id=reddit_id)
     post.comments.replace_more(limit=None)
@@ -91,26 +97,48 @@ def fetch_and_store_comments(reddit_id):
 
 def fetch_and_store_posts():
     subreddit = reddit.subreddit(os.getenv('SUBREDDIT'))
-    hot_posts = subreddit.hot(limit=3)
+    hot_posts = subreddit.hot(limit=100)
     logging.info("正在从 %s 获取热门帖子。", subreddit.display_name)
 
     for post in hot_posts:
+        logging.info("处理帖子 ID: %s", post.id)
+
         reddit_id = post.id
         title = post.title
-        content = post.selftext
         score = post.score
         upvote_ratio = post.upvote_ratio
         num_comments = post.num_comments
         permalink = post.permalink
         created_utc = datetime.fromtimestamp(post.created_utc, timezone.utc)
-        url = post.url
         now = datetime.now(timezone.utc)
 
-        # 检查数据库中是否已有翻译内容
-        cursor.execute("SELECT \"titleZh\", \"contentZh\" FROM \"Post\" WHERE \"redditId\" = %s", (reddit_id,))
+        if hasattr(post, 'selftext') and post.selftext:
+            content = post.selftext
+            post_type = 'self'
+        elif hasattr(post, 'url'):
+            content = post.url
+            if 'i.redd.it' in post.url or 'imgur.com' in post.url:
+                post_type = 'image'
+            else:
+                post_type = 'link'
+        elif hasattr(post, 'media') and post.media:
+            content = post.media
+            post_type = 'video'
+        elif hasattr(post, 'gallery_data') and post.gallery_data:
+            content = post.gallery_data
+            post_type = 'gallery'
+        elif hasattr(post, 'poll_data') and post.poll_data:
+            content = post.poll_data
+            post_type = 'poll'
+        else:
+            content = None
+            post_type = 'unknown'
+
+        # 检查数据库中是否已有翻译内容及帖子类型
+        cursor.execute("SELECT \"titleZh\", \"contentZh\", \"postType\" FROM \"Post\" WHERE \"redditId\" = %s", (reddit_id,))
         result = cursor.fetchone()
         if result:
-            translated_title, translated_content = result
+            translated_title, translated_content, existing_post_type = result
         else:
             translated_title = translate(title)
             translated_content = translate(content)
@@ -123,16 +151,16 @@ def fetch_and_store_posts():
                 INSERT INTO "Post" (
                     "redditId", "title", "content", "titleZh", "contentZh",
                     "subreddit", "author", "score", "upvoteRatio", "numComments",
-                    "permalink", "createdUtc", "url", "createdAt", "updatedAt"
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    "permalink", "createdUtc", "url", "postType", "createdAt", "updatedAt"
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT ("redditId") DO UPDATE SET
                     "title" = EXCLUDED."title", "content" = EXCLUDED."content", "titleZh" = EXCLUDED."titleZh",
                     "contentZh" = EXCLUDED."contentZh", "score" = EXCLUDED."score", "upvoteRatio" = EXCLUDED."upvoteRatio",
-                    "numComments" = EXCLUDED."numComments", "updatedAt" = EXCLUDED."updatedAt"
+                    "numComments" = EXCLUDED."numComments", "postType" = EXCLUDED."postType", "updatedAt" = EXCLUDED."updatedAt"
                 """,
                 (reddit_id, title, content, translated_title, translated_content, post.subreddit.display_name,
                  post.author.name if post.author else None, score, upvote_ratio, num_comments, permalink,
-                 created_utc, url, now, now)
+                 created_utc, post.url, post_type, now, now)
             )
             conn.commit()
             logging.info("帖子已存储或更新: %s", reddit_id)
@@ -141,7 +169,7 @@ def fetch_and_store_posts():
             conn.rollback()
 
         # Fetch and store comments for the current post
-        fetch_and_store_comments(reddit_id)
+#         fetch_and_store_comments(reddit_id)
 
 def main():
     fetch_and_store_posts()
