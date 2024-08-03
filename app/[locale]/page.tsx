@@ -116,7 +116,6 @@ export default function Home() {
                 <h1 className="text-3xl md:text-6xl title text-center mb-6 text-shadow-lg">流放之路小贴士 poe.tips</h1>
                 <div
                     className="z-10 w-full max-w-5xl text-center text-xs mb-6 flex flex-col-3 gap-3 justify-center items-end text-shadow-md">
-                    By&nbsp;&nbsp;
                     <a className="hover:underline"
                        href="https://space.bilibili.com/3537125507074883"
                        target="_blank"
@@ -139,6 +138,14 @@ export default function Home() {
                         <Image src="/image/qr/wx_fans_001.png" alt="微信群二维码" width="64" height="64"
                                className="transform transition-transform duration-300 group-hover:scale-150"/>
                     </span>
+
+                    <a className="hover:underline"
+                       href="https://home.poe.tips"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                    <span className="text-base text-[#dfcf99]">BUILDS
+                    <FontAwesomeIcon className="text-xs ml-2" icon={faArrowUpRightFromSquare}/></span>
+                    </a>
                 </div>
 
                 <div
