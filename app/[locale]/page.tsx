@@ -11,6 +11,7 @@ import {
     faTimes,
     faUser
 } from '@fortawesome/free-solid-svg-icons';
+import {faQq, faWeixin} from '@fortawesome/free-brands-svg-icons';
 import Image from "next/image";
 
 interface Comment {
@@ -114,22 +115,34 @@ export default function Home() {
                 className={`py-12 max-w-6xl mx-auto min-h-screen flex flex-col items-center justify-between relative transition-transform duration-300 ${selectedPost ? 'transform translate-x-[-22%]' : 'transform translate-x-0'}`}>
                 <h1 className="text-3xl md:text-6xl title text-center mb-6 text-shadow-lg">流放之路小贴士 poe.tips</h1>
                 <div
-                    className="z-10 w-full max-w-5xl text-center text-xs mb-6 flex flex-col-3 gap-3 justify-center items-center">
-                    By&nbsp;&nbsp;<a className="hover:underline"
-                                     href="https://space.bilibili.com/3537125507074883"
-                                     target="_blank"
-                                     rel="noopener noreferrer">
+                    className="z-10 w-full max-w-5xl text-center text-xs mb-6 flex flex-col-3 gap-3 justify-center items-end text-shadow-md">
+                    By&nbsp;&nbsp;
+                    <a className="hover:underline"
+                       href="https://space.bilibili.com/3537125507074883"
+                       target="_blank"
+                       rel="noopener noreferrer">
                     <span className="text-base text-[#dfcf99]">@TuberPOE大佬攻略汇集地
                     <FontAwesomeIcon className="text-xs ml-2" icon={faArrowUpRightFromSquare}/></span>
-                </a>
-                    粉丝群：
-                    <span className="mt-4">
-                        <Image src="/image/qr/wx_fans_001.png" alt="微信群二维码" width="64" height="64"/>
+                    </a>
+
+                    <span className="text-xs ml-2 text-[#dfcf99]">
+                        <FontAwesomeIcon className="text-xs mr-2 text-[#dfcf99]" icon={faQq}/>粉丝群：
+                    </span>
+                    <span className="relative group">
+                        <Image src="/image/qr/qq_fans_001.png" alt="QQ群二维码" width="64" height="64"
+                               className="transform transition-transform duration-300 group-hover:scale-150"/>
+                    </span>
+                    <span className="text-xs ml-2 text-[#dfcf99]">
+                        <FontAwesomeIcon className="text-xs mr-2 text-[#dfcf99]" icon={faWeixin}/>粉丝群：
+                    </span>
+                    <span className="relative group">
+                        <Image src="/image/qr/wx_fans_001.png" alt="微信群二维码" width="64" height="64"
+                               className="transform transition-transform duration-300 group-hover:scale-150"/>
                     </span>
                 </div>
 
                 <div
-                    className="flex flex-col items-center justify-between bg-black opacity-80 rounded-2xl shadow-custom w-full px-4">
+                    className="flex flex-col items-center justify-between bg-black bg-opacity-85 rounded-2xl shadow-custom w-full px-4">
                     <div
                         className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-3 lg:text-left gap-4">
                         {posts.map((post, index) => {
@@ -231,7 +244,7 @@ export default function Home() {
             {selectedPost && (
                 <div
                     ref={detailsRef}
-                    className="fixed top-0 right-0 w-full md:w-1/3 h-screen bg-black bg-opacity-80 shadow-custom overflow-auto p-6 z-0 transition-transform duration-300 transform translate-x-0"
+                    className="fixed top-0 right-0 w-full md:w-1/3 h-screen bg-black bg-opacity-85 shadow-custom overflow-auto p-6 z-0 transition-transform duration-300 transform translate-x-0"
                 >
                     <button onClick={clearPost} className="title text-lg font-semibold mb-4  z-20 relative">
                         <FontAwesomeIcon icon={faTimes}/>

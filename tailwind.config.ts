@@ -14,7 +14,7 @@ const config: Config = {
                     "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
             },
             boxShadow: {
-                'custom': '0 0 25px 5px rgba(0, 0, 0, 1)', // 自定义阴影效果
+                'custom': '0 0 5px 3px rgba(223, 207, 153, 0.35)', // 自定义阴影效果
             },
             textShadow: {
                 // 自定义你的字体阴影
