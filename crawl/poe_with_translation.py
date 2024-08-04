@@ -31,19 +31,32 @@ except Exception as e:
 def translate(text):
     client = Together()
     prompt = f"{text}"
-    completion = client.chat.completions.create(
-      model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
-      messages=[{
-        "role": "system", "content": """
-         你是一个专业的流放之路（POE, Path of Exile）游戏翻译专家，擅长翻译英文到中文，你要将我提供的英文内容翻译成中文，并使用游戏的专有名词。确保翻译后的内容准确反映游戏中的术语和专有名词。
-         仅完成内容翻译，不要输出非翻译的内容
-        """
-      }, {"role": "user", "content": prompt}],
-      stream=True
-    )
+    try:
+        completion = client.chat.completions.create(
+          model="meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+          messages=[{
+            "role": "system", "content": """
+             你是一个专业的流放之路（POE, Path of Exile）游戏翻译专家，擅长翻译英文到中文，你要将我提供的英文内容翻译成中文，并使用游戏的专有名词。确保翻译后的内容准确反映游戏中的术语和专有名词。
+             仅完成内容翻译，不要输出非翻译的内容
+            """
+          }, {"role": "user", "content": prompt}],
+          stream=True,
+          timeout=30  # 设置超时时间为30秒
+        )
+    except Exception as e:
+        logging.error("API 请求失败: %s", e)
+        return ""
+
     response = ""
-    for chunk in completion:
-        response += chunk.choices[0].delta.content or ""
+    try:
+        for chunk in completion:
+            if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
+                response += chunk.choices[0].delta.content
+            else:
+                logging.warning("收到无效的响应块: %s", chunk)
+    except Exception as e:
+        logging.error("处理响应流时出错: %s", e)
+        return ""
 
     logging.info("%s 的翻译结果：%s", text, response)
     return response
